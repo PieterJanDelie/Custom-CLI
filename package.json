@@ -1,0 +1,15 @@
+{
+  "name": "custom-cli",
+  "version": "1.0.0",
+  "description": "Custom CLI for React projects",
+  "main": "react/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "react": "./react/index.js"
+  }
+}
