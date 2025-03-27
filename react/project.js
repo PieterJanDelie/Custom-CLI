@@ -22,6 +22,9 @@ function createProject(name) {
 
     execSync("git add .", { stdio: "inherit" });
     execSync('git commit -m "Initial commit"', { stdio: "inherit" });
+    
+    console.log(`Opening project in VS Code...`);
+    execSync("code .", { stdio: "inherit" });
 
     console.log(`Project '${name}' created successfully.`);
   } catch (error) {
