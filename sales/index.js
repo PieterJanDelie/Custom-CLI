@@ -132,8 +132,8 @@ function upgradeFiles(names) {
   const upgradeMap = {
     declined: "leads",
     leads: "prospects",
-    prospects: "klanten",
-    klanten: "evangelisten",
+    prospects: "klant",
+    klanten: "evangelist",
   };
 
   const searchFolder = process.cwd();
@@ -205,6 +205,7 @@ Welkom bij de Sales CLI! Hier is een overzicht van de beschikbare commando's en 
    - Beschrijving: Laat deze helptekst zien.
   `);
 }
+
 function showHel() {
   console.log(`
 Oei oei oei. Ik hoop voor u dat het al bijna 17u is of bijna weekend. Computers zijn zeker irritant, en nog veel irritanter als gy niet meer kunt typen.
