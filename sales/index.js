@@ -41,6 +41,8 @@ function createLeadFiles(names) {
 
 if (type === "lead" && action === "create" && names.length > 0) {
   createLeadFiles(names);
-} else {
+} else if (type === "leads" && action === "create" && names.length > 0) {
+  createLeadFiles(names);
+}else {
   console.log("Usage: sales lead create <name> [<name2> ...]");
 }
