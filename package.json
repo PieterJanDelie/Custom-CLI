@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "bin": {
-    "react": "./react/index.js",
-    "sales": "./sales/index.js"
+    "react": "./react/index.js"
   }
 }
