@@ -19,7 +19,15 @@ const {
   listUnusedLayouts,
   showLayoutHelp,
 } = require("./layout");
-const createPage = require("./page");
+const {
+  createPage,
+  listPages,
+  removePage,
+  renamePage,
+  pageInfo,
+  listUnusedPages,
+  showPageHelp,
+} = require("./page");
 const createProject = require("./project");
 const createService = require("./service");
 const { countLines, showLinesHelp } = require("./lineCounter");
@@ -33,7 +41,7 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-if (type === "component" || type === "components") {
+function handleComponentCommands() {
   switch (action) {
     case "create":
       if (names.length > 0) {
@@ -83,7 +91,9 @@ if (type === "component" || type === "components") {
         "Usage: react component <create|remove|list|rename|info|test|unused|help> ..."
       );
   }
-} else if (type === "layout" || type === "layouts") {
+}
+
+function handleLayoutCommands() {
   switch (action) {
     case "create":
       if (names.length > 0) {
@@ -123,64 +133,134 @@ if (type === "component" || type === "components") {
         "Usage: react layout <create|list|remove|rename|info|unused|help> ..."
       );
   }
-} else if (type === "page" || type === "pages") {
-  if (action === "create" && names.length > 0) {
-    const capitalizedNames = names.map(capitalizeFirstLetter);
-    createPage(capitalizedNames);
-  } else {
-    console.error("Usage: react page create <name> [<name2> ...]");
+}
+
+function handlePageCommands() {
+  switch (action) {
+    case "create":
+      if (names.length > 0) {
+        const capitalizedNames = names.map(capitalizeFirstLetter);
+        createPage(capitalizedNames);
+      } else {
+        console.error("Usage: react page create <name> [<name2> ...]");
+      }
+      break;
+    case "list":
+      listPages();
+      break;
+    case "remove":
+      if (names.length > 0) {
+        removePage(names);
+      } else {
+        console.error("Usage: react page remove <name> [<name2> ...]");
+      }
+      break;
+    case "rename":
+      if (names.length === 2) {
+        renamePage(names[0], names[1]);
+      } else {
+        console.error("Usage: react page rename <oldName> <newName>");
+      }
+      break;
+    case "info":
+      pageInfo(names[0]);
+      break;
+    case "unused":
+      listUnusedPages();
+      break;
+    case "help":
+      showPageHelp();
+      break;
+    default:
+      console.log(
+        "Usage: react page <create|list|remove|rename|info|unused|help> ..."
+      );
   }
-} else if (type === "project" || type === "projects") {
+}
+
+function handleProjectCommands() {
   if (action === "create" && names.length === 1) {
     createProject(names[0]);
   } else {
     console.error("Usage: react project create <name>");
   }
-} else if (type === "service" || type === "services") {
+}
+
+function handleServiceCommands() {
   if (action === "create" && names.length > 0) {
     const capitalizedNames = names.map(capitalizeFirstLetter);
     createService(capitalizedNames);
   } else {
     console.error("Usage: react service create <name> [<name2> ...]");
   }
-} else if (type === "lines" && action === "help") {
-  showLinesHelp();
-} else if (type === "lines" && action === "count") {
-  // Slimme parsing: eerste argument extensie of subfolder
-  let extFilter = undefined;
-  let subfolderFilter = undefined;
+}
 
-  if (names.length > 0) {
-    // Kijk of eerste argument een bekende extensie is
-    const knownExts = [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "css",
-      "scss",
-      "html",
-      "md",
-      "vue",
-      "json",
-    ];
-    if (knownExts.includes(names[0].replace(/^\./, ""))) {
-      extFilter = names[0];
-      if (names[1]) subfolderFilter = names[1];
-    } else {
-      subfolderFilter = names[0];
-      if (names[1]) extFilter = names[1];
-    }
+function handleLinesCommands() {
+  if (action === "help") {
+    showLinesHelp();
+    return;
   }
-
-  countLines(subfolderFilter, extFilter);
-} else {
+  if (action === "count") {
+    // Slimme parsing: eerste argument extensie of subfolder
+    let extFilter = undefined;
+    let subfolderFilter = undefined;
+    if (names.length > 0) {
+      const knownExts = [
+        "js",
+        "jsx",
+        "ts",
+        "tsx",
+        "css",
+        "scss",
+        "html",
+        "md",
+        "vue",
+        "json",
+      ];
+      if (knownExts.includes(names[0].replace(/^\./, ""))) {
+        extFilter = names[0];
+        if (names[1]) subfolderFilter = names[1];
+      } else {
+        subfolderFilter = names[0];
+        if (names[1]) extFilter = names[1];
+      }
+    }
+    countLines(subfolderFilter, extFilter);
+    return;
+  }
   console.log(
-    "Usage: react component <create|remove|list|rename|info|test|unused|help> ...\n" +
-      "       react layout <create|list|remove|rename|info|unused|help> ...\n" +
-      "       react page create <name> [<name2> ...]\n" +
-      "       react project create <name>\n" +
-      "       react service create <name> [<name2> ...]\n" +
-      "       react lines count"
+    "Usage: react lines count [<subfolder>] [<ext>]\n       react lines help"
   );
+}
+
+// Main command router
+switch (true) {
+  case type === "component" || type === "components":
+    handleComponentCommands();
+    break;
+  case type === "layout" || type === "layouts":
+    handleLayoutCommands();
+    break;
+  case type === "page" || type === "pages":
+    handlePageCommands();
+    break;
+  case type === "project" || type === "projects":
+    handleProjectCommands();
+    break;
+  case type === "service" || type === "services":
+    handleServiceCommands();
+    break;
+  case type === "lines":
+    handleLinesCommands();
+    break;
+  default:
+    console.log(
+      "Usage: react component <create|remove|list|rename|info|test|unused|help> ...\n" +
+        "       react layout <create|list|remove|rename|info|unused|help> ...\n" +
+        "       react page <create|list|remove|rename|info|unused|help> ...\n" +
+        "       react project create <name>\n" +
+        "       react service create <name> [<name2> ...]\n" +
+        "       react lines count [<subfolder>] [<ext>]\n" +
+        "       react lines help"
+    );
 }
