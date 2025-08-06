@@ -187,11 +187,45 @@ function handleProjectCommands() {
 }
 
 function handleServiceCommands() {
-  if (action === "create" && names.length > 0) {
-    const capitalizedNames = names.map(capitalizeFirstLetter);
-    createService(capitalizedNames);
-  } else {
-    console.error("Usage: react service create <name> [<name2> ...]");
+  switch (action) {
+    case "create":
+      if (names.length > 0) {
+        const capitalizedNames = names.map(capitalizeFirstLetter);
+        createService(capitalizedNames);
+      } else {
+        console.error("Usage: react service create <name> [<name2> ...]");
+      }
+      break;
+    case "list":
+      listServices();
+      break;
+    case "remove":
+      if (names.length > 0) {
+        removeService(names);
+      } else {
+        console.error("Usage: react service remove <name> [<name2> ...]");
+      }
+      break;
+    case "rename":
+      if (names.length === 2) {
+        renameService(names[0], names[1]);
+      } else {
+        console.error("Usage: react service rename <oldName> <newName>");
+      }
+      break;
+    case "info":
+      serviceInfo(names[0]);
+      break;
+    case "unused":
+      listUnusedServices();
+      break;
+    case "help":
+      showServiceHelp();
+      break;
+    default:
+      console.log(
+        "Usage: react service <create|list|remove|rename|info|unused|help> ..."
+      );
   }
 }
 
@@ -234,33 +268,26 @@ function handleLinesCommands() {
 }
 
 // Main command router
-switch (true) {
-  case type === "component" || type === "components":
-    handleComponentCommands();
-    break;
-  case type === "layout" || type === "layouts":
-    handleLayoutCommands();
-    break;
-  case type === "page" || type === "pages":
-    handlePageCommands();
-    break;
-  case type === "project" || type === "projects":
-    handleProjectCommands();
-    break;
-  case type === "service" || type === "services":
-    handleServiceCommands();
-    break;
-  case type === "lines":
-    handleLinesCommands();
-    break;
-  default:
-    console.log(
-      "Usage: react component <create|remove|list|rename|info|test|unused|help> ...\n" +
-        "       react layout <create|list|remove|rename|info|unused|help> ...\n" +
-        "       react page <create|list|remove|rename|info|unused|help> ...\n" +
-        "       react project create <name>\n" +
-        "       react service create <name> [<name2> ...]\n" +
-        "       react lines count [<subfolder>] [<ext>]\n" +
-        "       react lines help"
-    );
+if (type === "component" || type === "components") {
+  handleComponentCommands();
+} else if (type === "layout" || type === "layouts") {
+  handleLayoutCommands();
+} else if (type === "page" || type === "pages") {
+  handlePageCommands();
+} else if (type === "project" || type === "projects") {
+  handleProjectCommands();
+} else if (type === "service" || type === "services") {
+  handleServiceCommands();
+} else if (type === "lines") {
+  handleLinesCommands();
+} else {
+  console.log(
+    "Usage: react component <create|remove|list|rename|info|test|unused|help> ...\n" +
+      "       react layout <create|list|remove|rename|info|unused|help> ...\n" +
+      "       react page <create|list|remove|rename|info|unused|help> ...\n" +
+      "       react project create <name>\n" +
+      "       react service <create|list|remove|rename|info|unused|help> ...\n" +
+      "       react lines count [<subfolder>] [<ext>]\n" +
+      "       react lines help"
+  );
 }
