@@ -10,11 +10,19 @@ const {
   listUnusedComponents,
   showComponentHelp,
 } = require("./component");
+const {
+  createLayout,
+  listLayouts,
+  removeLayout,
+  renameLayout,
+  layoutInfo,
+  listUnusedLayouts,
+  showLayoutHelp,
+} = require("./layout");
 const createPage = require("./page");
-const createLayout = require("./layout");
 const createProject = require("./project");
 const createService = require("./service");
-const countLines = require("./lineCounter");
+const { countLines, showLinesHelp } = require("./lineCounter");
 
 const args = process.argv.slice(2);
 const type = args[0];
@@ -72,44 +80,107 @@ if (type === "component" || type === "components") {
       break;
     default:
       console.log(
-        "Usage: react component <create|remove|list|rename|info|test> ..."
+        "Usage: react component <create|remove|list|rename|info|test|unused|help> ..."
       );
   }
-} else if (action === "create" && names.length > 0) {
-  const capitalizedNames = names.map(capitalizeFirstLetter);
-
-  switch (type) {
-    case "page":
-    case "pages":
-      createPage(capitalizedNames);
-      break;
-    case "layout":
-    case "layouts":
-      createLayout(capitalizedNames);
-      break;
-    case "project":
-    case "projects":
-      if (capitalizedNames.length > 1) {
-        console.error("Error: Only one project can be created at a time.");
+} else if (type === "layout" || type === "layouts") {
+  switch (action) {
+    case "create":
+      if (names.length > 0) {
+        createLayout(names);
       } else {
-        createProject(capitalizedNames[0]);
+        console.error("Please provide at least one layout name.");
       }
       break;
-    case "service":
-    case "services":
-      createService(capitalizedNames);
+    case "list":
+      listLayouts();
+      break;
+    case "remove":
+      if (names.length > 0) {
+        removeLayout(names);
+      } else {
+        console.error("Please provide at least one layout name to remove.");
+      }
+      break;
+    case "rename":
+      if (names.length === 2) {
+        renameLayout(names[0], names[1]);
+      } else {
+        console.error("Usage: react layout rename <oldName> <newName>");
+      }
+      break;
+    case "info":
+      layoutInfo(names[0]);
+      break;
+    case "unused":
+      listUnusedLayouts();
+      break;
+    case "help":
+      showLayoutHelp();
       break;
     default:
-      console.error(
-        "Invalid type. Use component, page, layout, project, service, or lines."
+      console.log(
+        "Usage: react layout <create|list|remove|rename|info|unused|help> ..."
       );
   }
+} else if (type === "page" || type === "pages") {
+  if (action === "create" && names.length > 0) {
+    const capitalizedNames = names.map(capitalizeFirstLetter);
+    createPage(capitalizedNames);
+  } else {
+    console.error("Usage: react page create <name> [<name2> ...]");
+  }
+} else if (type === "project" || type === "projects") {
+  if (action === "create" && names.length === 1) {
+    createProject(names[0]);
+  } else {
+    console.error("Usage: react project create <name>");
+  }
+} else if (type === "service" || type === "services") {
+  if (action === "create" && names.length > 0) {
+    const capitalizedNames = names.map(capitalizeFirstLetter);
+    createService(capitalizedNames);
+  } else {
+    console.error("Usage: react service create <name> [<name2> ...]");
+  }
+} else if (type === "lines" && action === "help") {
+  showLinesHelp();
 } else if (type === "lines" && action === "count") {
-  countLines();
+  // Slimme parsing: eerste argument extensie of subfolder
+  let extFilter = undefined;
+  let subfolderFilter = undefined;
+
+  if (names.length > 0) {
+    // Kijk of eerste argument een bekende extensie is
+    const knownExts = [
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "css",
+      "scss",
+      "html",
+      "md",
+      "vue",
+      "json",
+    ];
+    if (knownExts.includes(names[0].replace(/^\./, ""))) {
+      extFilter = names[0];
+      if (names[1]) subfolderFilter = names[1];
+    } else {
+      subfolderFilter = names[0];
+      if (names[1]) extFilter = names[1];
+    }
+  }
+
+  countLines(subfolderFilter, extFilter);
 } else {
   console.log(
-    "Usage: react component <create|remove|list|rename|info|test> ...\n" +
-      "       react <page|layout|project|service> create <name> [<name2> ...]\n" +
+    "Usage: react component <create|remove|list|rename|info|test|unused|help> ...\n" +
+      "       react layout <create|list|remove|rename|info|unused|help> ...\n" +
+      "       react page create <name> [<name2> ...]\n" +
+      "       react project create <name>\n" +
+      "       react service create <name> [<name2> ...]\n" +
       "       react lines count"
   );
 }
