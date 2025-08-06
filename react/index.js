@@ -31,6 +31,12 @@ const {
 const createProject = require("./project");
 const createService = require("./service");
 const { countLines, showLinesHelp } = require("./lineCounter");
+const { runDoctor } = require("./doctor");
+const {
+  upgradeDependencies,
+  checkSecurityIssues,
+  showUpgradeHelp,
+} = require("./upgradeDeps");
 
 const args = process.argv.slice(2);
 const type = args[0];
@@ -267,6 +273,24 @@ function handleLinesCommands() {
   );
 }
 
+function handleDoctorCommands() {
+  runDoctor();
+}
+
+function handleUpgradeCommands() {
+  if (names.includes("--security")) {
+    checkSecurityIssues();
+  } else if (names.includes("--check")) {
+    // Only check, don't upgrade
+    console.log("🔍 Checking for outdated packages...");
+    upgradeDependencies();
+  } else if (action === "help") {
+    showUpgradeHelp();
+  } else {
+    upgradeDependencies();
+  }
+}
+
 // Main command router
 if (type === "component" || type === "components") {
   handleComponentCommands();
@@ -280,6 +304,10 @@ if (type === "component" || type === "components") {
   handleServiceCommands();
 } else if (type === "lines") {
   handleLinesCommands();
+} else if (type === "doctor") {
+  handleDoctorCommands();
+} else if (type === "upgrade-deps") {
+  handleUpgradeCommands();
 } else {
   console.log(`
 ==================== ✨ React CLI - Command Overzicht ✨ ====================
@@ -334,5 +362,13 @@ react lines count [<subfolder>] [<ext>]
 react lines help
   📊  count                           ➔ Tel regels code (optioneel per map/extensie)
   ❓  help                            ➔ Toon uitleg over lines count
+
+================ UTILITIES ==================
+react doctor
+react upgrade-deps [--security|--check|help]
+  🩺  doctor                          ➔ Scan project op problemen en suggesties
+  🚀  upgrade-deps                    ➔ Update dependencies naar laatste versie
+  🔒  upgrade-deps --security         ➔ Voer security audit uit
+  📊  upgrade-deps --check            ➔ Controleer outdated packages
 `);
 }
