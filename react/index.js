@@ -281,13 +281,58 @@ if (type === "component" || type === "components") {
 } else if (type === "lines") {
   handleLinesCommands();
 } else {
-  console.log(
-    "Usage: react component <create|remove|list|rename|info|test|unused|help> ...\n" +
-      "       react layout <create|list|remove|rename|info|unused|help> ...\n" +
-      "       react page <create|list|remove|rename|info|unused|help> ...\n" +
-      "       react project create <name>\n" +
-      "       react service <create|list|remove|rename|info|unused|help> ...\n" +
-      "       react lines count [<subfolder>] [<ext>]\n" +
-      "       react lines help"
-  );
+  console.log(`
+==================== ✨ React CLI - Command Overzicht ✨ ====================
+
+================ COMPONENTS =================
+react component <create|remove|list|rename|info|test|unused|help> ...
+  🛠️  create <naam> [<naam2> ...]     ➔ Maak component(en) aan
+  🗑️  remove <naam> [<naam2> ...]     ➔ Verwijder component(en)
+  📦  list                            ➔ Toon alle componenten
+  🔄  rename <oud> <nieuw>            ➔ Hernoem component
+  🔍  info [naam]                     ➔ Info over component(en)
+  🧪  test <naam> [<naam2> ...]       ➔ Maak testbestand aan
+  💤  unused                          ➔ Toon ongebruikte componenten
+  ❓  help                            ➔ Toon component help
+
+================ LAYOUTS ====================
+react layout <create|list|remove|rename|info|unused|help> ...
+  🛠️  create <naam> [<naam2> ...]     ➔ Maak layout(s) aan
+  🗑️  remove <naam> [<naam2> ...]     ➔ Verwijder layout(s)
+  📦  list                            ➔ Toon alle layouts
+  🔄  rename <oud> <nieuw>            ➔ Hernoem layout
+  🔍  info [naam]                     ➔ Info over layout(s)
+  💤  unused                          ➔ Toon ongebruikte layouts
+  ❓  help                            ➔ Toon layout help
+
+================ PAGES ======================
+react page <create|list|remove|rename|info|unused|help> ...
+  🛠️  create <naam> [<naam2> ...]     ➔ Maak page(s) aan
+  🗑️  remove <naam> [<naam2> ...]     ➔ Verwijder page(s)
+  📚  list                            ➔ Toon alle pages
+  🔄  rename <oud> <nieuw>            ➔ Hernoem page
+  🔍  info [naam]                     ➔ Info over page(s)
+  💤  unused                          ➔ Toon ongebruikte pages
+  ❓  help                            ➔ Toon page help
+
+================ PROJECTS ===================
+react project create <name>
+  🚀  create <naam>                   ➔ Maak een nieuw project
+
+================ SERVICES ===================
+react service <create|list|remove|rename|info|unused|help> ...
+  🛠️  create <naam> [<naam2> ...]     ➔ Maak service(s) aan
+  🗑️  remove <naam> [<naam2> ...]     ➔ Verwijder service(s)
+  📦  list                            ➔ Toon alle services
+  🔄  rename <oud> <nieuw>            ➔ Hernoem service
+  🔍  info [naam]                     ➔ Info over service(s)
+  💤  unused                          ➔ Toon ongebruikte services
+  ❓  help                            ➔ Toon service help
+
+================ LINES ======================
+react lines count [<subfolder>] [<ext>]
+react lines help
+  📊  count                           ➔ Tel regels code (optioneel per map/extensie)
+  ❓  help                            ➔ Toon uitleg over lines count
+`);
 }
