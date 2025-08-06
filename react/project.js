@@ -7,8 +7,8 @@ function createProject(name) {
   const projectPath = path.join(process.cwd(), name);
 
   try {
-    console.log(`Cloning repository from ${repoUrl}...`);
-    execSync(`git clone ${repoUrl} ${projectPath}`, { stdio: "inherit" });
+    console.log(`Cloning repository from ${repoUrl} into ${name}...`);
+    execSync(`git clone ${repoUrl} "${name}"`, { stdio: "inherit" });
 
     console.log(`Removing .git folder...`);
     fs.rmSync(path.join(projectPath, ".git"), { recursive: true, force: true });
@@ -22,7 +22,7 @@ function createProject(name) {
 
     execSync("git add .", { stdio: "inherit" });
     execSync('git commit -m "Initial commit"', { stdio: "inherit" });
-    
+
     console.log(`Opening project in VS Code...`);
     execSync("code .", { stdio: "inherit" });
 

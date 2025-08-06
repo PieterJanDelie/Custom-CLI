@@ -1,6 +1,15 @@
 #!/usr/bin/env node
 
-const createComponent = require("./component");
+const {
+  createComponent,
+  removeComponent,
+  listComponents,
+  renameComponent,
+  componentInfo,
+  createComponentTest,
+  listUnusedComponents,
+  showComponentHelp,
+} = require("./component");
 const createPage = require("./page");
 const createLayout = require("./layout");
 const createProject = require("./project");
@@ -16,14 +25,60 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-if (action === "create" && names.length > 0) {
+if (type === "component" || type === "components") {
+  switch (action) {
+    case "create":
+      if (names.length > 0) {
+        const capitalizedNames = names.map(capitalizeFirstLetter);
+        createComponent(capitalizedNames);
+      } else {
+        console.error("Please provide at least one component name.");
+      }
+      break;
+    case "remove":
+      if (names.length > 0) {
+        removeComponent(names);
+      } else {
+        console.error("Please provide at least one component name to remove.");
+      }
+      break;
+    case "list":
+      listComponents();
+      break;
+    case "rename":
+      if (names.length === 2) {
+        renameComponent(names[0], names[1]);
+      } else {
+        console.error("Usage: react component rename <oldName> <newName>");
+      }
+      break;
+    case "info":
+      componentInfo(names[0]);
+      break;
+    case "test":
+      if (names.length > 0) {
+        createComponentTest(names);
+      } else {
+        console.error(
+          "Please provide at least one component name for test creation."
+        );
+      }
+      break;
+    case "unused":
+      listUnusedComponents();
+      break;
+    case "help":
+      showComponentHelp();
+      break;
+    default:
+      console.log(
+        "Usage: react component <create|remove|list|rename|info|test> ..."
+      );
+  }
+} else if (action === "create" && names.length > 0) {
   const capitalizedNames = names.map(capitalizeFirstLetter);
 
   switch (type) {
-    case "component":
-    case "components":
-      createComponent(capitalizedNames);
-      break;
     case "page":
     case "pages":
       createPage(capitalizedNames);
@@ -53,6 +108,8 @@ if (action === "create" && names.length > 0) {
   countLines();
 } else {
   console.log(
-    "Usage: react <component|page|layout|project|service> create <name> [<name2> ...] | react lines count"
+    "Usage: react component <create|remove|list|rename|info|test> ...\n" +
+      "       react <page|layout|project|service> create <name> [<name2> ...]\n" +
+      "       react lines count"
   );
 }
